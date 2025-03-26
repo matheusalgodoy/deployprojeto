@@ -366,9 +366,11 @@ const BarberDashboard = () => {
       if (isIOS) {
         // No iOS, primeiro tentar abrir no app
         window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        // Armazenar o link para o fallback
+        const whatsappLink = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
         // Fallback para o navegador após um pequeno delay
         setTimeout(() => {
-          window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+          window.open(whatsappLink, "_blank");
         }, 300);
       } else if (isAndroid) {
         // Para Android
@@ -421,8 +423,10 @@ const BarberDashboard = () => {
       if (isIOS) {
         // No iOS, primeiro tentar abrir no app, se falhar abre no navegador
         window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        // Armazenar o link para o fallback
+        const whatsappLink = linkWhatsApp;
         setTimeout(() => {
-          window.location.href = linkWhatsApp;
+          window.open(whatsappLink, "_blank");
         }, 300);
       } else if (isAndroid) {
         window.location.href = linkWhatsApp;
@@ -466,9 +470,11 @@ const BarberDashboard = () => {
       if (isIOS) {
         // No iOS, primeiro tentar abrir no app
         window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        // Armazenar o link para o fallback
+        const whatsappLink = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
         // Fallback para o navegador após um pequeno delay
         setTimeout(() => {
-          window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+          window.open(whatsappLink, "_blank");
         }, 300);
       } else if (isAndroid) {
         // Para Android
