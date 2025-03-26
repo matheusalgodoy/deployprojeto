@@ -225,11 +225,18 @@ const Scheduling = () => {
       setHorarioSelecionado("");
       setDataSelecionada(undefined);
       
-      // Detectar se é dispositivo móvel
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      // Detectar se é dispositivo iOS
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
       
       // Abrir o link do WhatsApp de acordo com o dispositivo
-      if (isMobile) {
+      if (isIOS) {
+        // No iOS, primeiro tentar abrir no app, se falhar abre no navegador
+        window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
+        setTimeout(() => {
+          window.location.href = linkWhatsAppCliente;
+        }, 300);
+      } else if (isAndroid) {
         window.location.href = linkWhatsAppCliente;
       } else {
         window.open(linkWhatsAppCliente, "_blank");
