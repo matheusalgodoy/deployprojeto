@@ -144,7 +144,7 @@ export function ClientDashboard() {
           <Link to="/" className="flex items-center space-x-3">
             <Avatar className="h-10 w-10">
               <AvatarImage
-                src="/lovable-uploads/a313fca3-1781-4832-a011-eb22c0d3b248.png"
+                src="/ganso-logo.png"
                 alt="Logo Barbearia do Gansinho"
               />
               <AvatarFallback>BG</AvatarFallback>

@@ -412,8 +412,15 @@ const BarberDashboard = () => {
       // Criar URL do WhatsApp
       const whatsappUrl = `https://api.whatsapp.com/send?phone=55${telefone}&text=${encodeURIComponent(mensagem)}`;
       
-      // Abrir WhatsApp em nova aba
-      window.open(whatsappUrl, '_blank');
+      // Detectar se é dispositivo móvel
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      // Abrir o link do WhatsApp de acordo com o dispositivo
+      if (isMobile) {
+        window.location.href = whatsappUrl;
+      } else {
+        window.open(whatsappUrl, '_blank');
+      }
 
       toast({
         title: "Notificação enviada",

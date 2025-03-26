@@ -225,8 +225,15 @@ const Scheduling = () => {
       setHorarioSelecionado("");
       setDataSelecionada(undefined);
       
-      // Abrir o link em uma nova aba para o cliente após tudo estar concluído
-      window.open(linkWhatsAppCliente, "_blank");
+      // Detectar se é dispositivo móvel
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      // Abrir o link do WhatsApp de acordo com o dispositivo
+      if (isMobile) {
+        window.location.href = linkWhatsAppCliente;
+      } else {
+        window.open(linkWhatsAppCliente, "_blank");
+      }
     } catch (err: any) {
       console.error('Erro ao processar agendamento:', err);
       toast({
