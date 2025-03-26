@@ -358,10 +358,25 @@ const BarberDashboard = () => {
       
       // Construir o link do WhatsApp com o telefone formatado
       const telefoneFormatado = formatarTelefoneWhatsApp(agendamento.telefone);
-      const linkWhatsApp = `https://wa.me/${telefoneFormatado}?text=${mensagemCodificada}`;
       
-      // Abrir o link em uma nova aba
-      window.open(linkWhatsApp, "_blank");
+      // Detectar se é dispositivo móvel
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      
+      if (isIOS) {
+        // No iOS, primeiro tentar abrir no app
+        window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        // Fallback para o navegador após um pequeno delay
+        setTimeout(() => {
+          window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        }, 300);
+      } else if (isAndroid) {
+        // Para Android
+        window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+      } else {
+        // Para desktop
+        window.open(`https://web.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`, "_blank");
+      }
     } catch (error) {
       console.error('Erro ao enviar mensagem WhatsApp:', error);
       toast({
@@ -380,12 +395,44 @@ const BarberDashboard = () => {
       );
       setAgendamentos(novosAgendamentos);
 
-      // Enviar mensagem WhatsApp após atualizar o status
-      enviarMensagemWhatsApp(agendamento, novoStatus);
+      // Formatar a data para exibição
+      const dataFormatada = format(convertToDate(agendamento.data), "dd/MM/yyyy", { locale: ptBR });
+      
+      // Criar a mensagem com base no status
+      let mensagem = "";
+      if (novoStatus === "confirmado") {
+        mensagem = `Olá ${agendamento.nome}! Seu agendamento na Barbearia do Gansinho foi confirmado.\n\nServiço: ${agendamento.servico}\nData: ${dataFormatada}\nHorário: ${agendamento.horario}\n\nAguardamos você!`;
+      } else if (novoStatus === "cancelado") {
+        mensagem = `Olá ${agendamento.nome}! Infelizmente precisamos cancelar seu agendamento na Barbearia do Gansinho.\n\nServiço: ${agendamento.servico}\nData: ${dataFormatada}\nHorário: ${agendamento.horario}\n\nPor favor, entre em contato conosco para reagendar.`;
+      }
+      
+      // Codificar a mensagem para URL
+      const mensagemCodificada = encodeURIComponent(mensagem);
+      
+      // Construir o link do WhatsApp com o telefone formatado
+      const telefoneFormatado = formatarTelefoneWhatsApp(agendamento.telefone);
+      const linkWhatsApp = `https://wa.me/${telefoneFormatado}?text=${mensagemCodificada}`;
+      
+      // Detectar se é dispositivo móvel
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      
+      // Abrir o link do WhatsApp de acordo com o dispositivo
+      if (isIOS) {
+        // No iOS, primeiro tentar abrir no app, se falhar abre no navegador
+        window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        setTimeout(() => {
+          window.location.href = linkWhatsApp;
+        }, 300);
+      } else if (isAndroid) {
+        window.location.href = linkWhatsApp;
+      } else {
+        window.open(linkWhatsApp, "_blank");
+      }
 
       toast({
         title: `Agendamento ${novoStatus}`,
-        description: `O agendamento foi ${novoStatus} com sucesso e uma mensagem foi enviada ao cliente.`,
+        description: `O agendamento foi ${novoStatus} com sucesso e uma mensagem será enviada ao cliente.`,
       });
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
@@ -406,20 +453,29 @@ const BarberDashboard = () => {
         + `✂️ Serviço: ${agendamento.servico}\n\n`
         + `Por favor, chegue com alguns minutos de antecedência. Estamos te aguardando!`;
 
-      // Formatar número do WhatsApp (remover caracteres não numéricos)
-      const telefone = agendamento.telefone.replace(/\D/g, '');
+      // Codificar a mensagem para URL
+      const mensagemCodificada = encodeURIComponent(mensagem);
       
-      // Criar URL do WhatsApp
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=55${telefone}&text=${encodeURIComponent(mensagem)}`;
+      // Formatar número do WhatsApp
+      const telefoneFormatado = formatarTelefoneWhatsApp(agendamento.telefone);
       
       // Detectar se é dispositivo móvel
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
       
-      // Abrir o link do WhatsApp de acordo com o dispositivo
-      if (isMobile) {
-        window.location.href = whatsappUrl;
+      if (isIOS) {
+        // No iOS, primeiro tentar abrir no app
+        window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        // Fallback para o navegador após um pequeno delay
+        setTimeout(() => {
+          window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        }, 300);
+      } else if (isAndroid) {
+        // Para Android
+        window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
       } else {
-        window.open(whatsappUrl, '_blank');
+        // Para desktop
+        window.open(`https://web.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`, "_blank");
       }
 
       toast({

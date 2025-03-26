@@ -225,21 +225,24 @@ const Scheduling = () => {
       setHorarioSelecionado("");
       setDataSelecionada(undefined);
       
-      // Detectar se é dispositivo iOS
+      // Detectar se é dispositivo móvel
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-      const isAndroid = /Android/i.test(navigator.userAgent);
       
-      // Abrir o link do WhatsApp de acordo com o dispositivo
-      if (isIOS) {
-        // No iOS, primeiro tentar abrir no app, se falhar abre no navegador
-        window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
-        setTimeout(() => {
-          window.location.href = linkWhatsAppCliente;
-        }, 300);
-      } else if (isAndroid) {
-        window.location.href = linkWhatsAppCliente;
-      } else {
-        window.open(linkWhatsAppCliente, "_blank");
+      try {
+        if (isIOS) {
+          // No iOS, primeiro tentar abrir no app
+          window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
+          // Fallback para o navegador após um pequeno delay
+          setTimeout(() => {
+            window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
+          }, 300);
+        } else if (isMobile) {
+          // Para Android e outros dispositivos móveis
+          window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
+        } else {
+          // Para desktop
+          window.open(`https://web.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`, "_blank");
       }
     } catch (err: any) {
       console.error('Erro ao processar agendamento:', err);
