@@ -15,7 +15,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
-              <AvatarImage src="/lovable-uploads/a313fca3-1781-4832-a011-eb22c0d3b248.png" alt="Logo Barbearia do Gansinho" />
+              <AvatarImage src="/ganso-logo.png" alt="Logo Barbearia do Gansinho" />
               <AvatarFallback>BG</AvatarFallback>
             </Avatar>
             <h1 className="text-lg sm:text-xl font-bold text-gray-900">Barbearia do Gansinho</h1>
@@ -118,7 +118,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
               <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
-                <AvatarImage src="/lovable-uploads/a313fca3-1781-4832-a011-eb22c0d3b248.png" alt="Logo Barbearia do Gansinho" />
+                <AvatarImage src="/ganso-logo.png" alt="Logo Barbearia do Gansinho" />
                 <AvatarFallback>BG</AvatarFallback>
               </Avatar>
               <span className="text-base sm:text-lg font-bold text-gray-900">Barbearia do Gansinho</span>
