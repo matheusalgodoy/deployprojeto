@@ -58,6 +58,12 @@ const Index = () => {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
         <div className="text-center max-w-3xl mx-auto">
+          <div className="mb-6 p-4 bg-amber-100 border border-amber-300 rounded-lg">
+            <p className="text-amber-800 font-medium">
+              <strong>Atenção:</strong> Este sistema está em fase de testes e pode apresentar bugs. 
+              Em caso de problemas, entre em contato com o desenvolvedor: Matheus Godoy.
+            </p>
+          </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">Agende seu horário com facilidade</h2>
           <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">
             Sistema de agendamento online para barbearias com notificações via WhatsApp
