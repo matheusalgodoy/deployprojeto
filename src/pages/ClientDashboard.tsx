@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { agendamentoService } from "@/lib/supabase";
+import { formatarTelefoneWhatsApp } from "@/lib/utils";
+import { BARBEARIA_TELEFONE } from "@/lib/constants";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,6 +78,13 @@ export function ClientDashboard() {
   const handleCancelar = async (id: string) => {
     try {
       setLoading(true);
+      
+      // Primeiro buscar os dados do agendamento antes de cancelar
+      const agendamento = agendamentos.find(a => a.id === id);
+      if (!agendamento) {
+        throw new Error("Agendamento não encontrado");
+      }
+      
       await agendamentoService.cancelarAgendamento(id);
       
       // Atualizar o estado local imediatamente
@@ -84,6 +93,45 @@ export function ClientDashboard() {
           a.id === id ? { ...a, status: "cancelado" } : a
         )
       );
+
+      // Preparar mensagem para o barbeiro
+      const dataFormatada = format(agendamento.data, "dd/MM/yyyy", { locale: ptBR });
+      const mensagem = `Olá! Estou cancelando meu agendamento na Barbearia do Gansinho.\n\nServiço: ${agendamento.servico}\nData: ${dataFormatada}\nHorário: ${agendamento.horario}\nNome: ${agendamento.nome}`;
+      
+      // Codificar a mensagem para URL
+      const mensagemCodificada = encodeURIComponent(mensagem);
+      
+      // Construir o link do WhatsApp com o telefone formatado
+      const telefoneFormatado = formatarTelefoneWhatsApp(BARBEARIA_TELEFONE);
+      
+      // Detectar se é dispositivo móvel
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      
+      if (isIOS) {
+        // Para iOS, usar uma abordagem diferente
+        // Criar um link invisível e clicar nele para abrir o app
+        const appUrl = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', appUrl);
+        linkElement.style.display = 'none';
+        document.body.appendChild(linkElement);
+        linkElement.click();
+        
+        // Remover o link após o clique
+        setTimeout(() => {
+          document.body.removeChild(linkElement);
+          
+          // Fallback para o navegador após um pequeno delay
+          window.open(`https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`, "_blank");
+        }, 500); // Aumentar o delay para dar tempo ao dispositivo
+      } else if (isAndroid) {
+        // Para Android
+        window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`;
+      } else {
+        // Para desktop
+        window.open(`https://web.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemCodificada}`, "_blank");
+      }
 
       toast({
         title: "Agendamento cancelado",

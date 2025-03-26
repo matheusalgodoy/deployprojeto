@@ -231,20 +231,39 @@ const Scheduling = () => {
       
       try {
         if (isIOS) {
-          // No iOS, primeiro tentar abrir no app
-          window.location.href = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
-          // Armazenar o link para o fallback
-          const whatsappLink = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
-          // Fallback para o navegador após um pequeno delay
+          // Para iOS, usar uma abordagem diferente
+          // Primeiro tentar abrir diretamente no app do WhatsApp
+          const appUrl = `whatsapp://send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
+          
+          // Criar um link invisível e clicar nele para abrir o app
+          const linkElement = document.createElement('a');
+          linkElement.setAttribute('href', appUrl);
+          linkElement.style.display = 'none';
+          document.body.appendChild(linkElement);
+          linkElement.click();
+          
+          // Remover o link após o clique
           setTimeout(() => {
-            window.open(whatsappLink, "_blank");
-          }, 300);
+            document.body.removeChild(linkElement);
+            
+            // Fallback para o navegador após um pequeno delay
+            // Usar window.open em vez de window.location.href para o fallback
+            window.open(`https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`, "_blank");
+          }, 500); // Aumentar o delay para dar tempo ao dispositivo
         } else if (isMobile) {
           // Para Android e outros dispositivos móveis
           window.location.href = `https://api.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`;
         } else {
           // Para desktop
           window.open(`https://web.whatsapp.com/send?phone=${telefoneFormatado}&text=${mensagemClienteCodificada}`, "_blank");
+        }
+      } catch (err: any) {
+        console.error('Erro ao redirecionar para WhatsApp:', err);
+        toast({
+          title: "Erro ao abrir WhatsApp",
+          description: "Não foi possível abrir o WhatsApp automaticamente. Por favor, entre em contato manualmente.",
+          variant: "destructive"
+        });
       }
     } catch (err: any) {
       console.error('Erro ao processar agendamento:', err);
@@ -257,7 +276,7 @@ const Scheduling = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   const handleCancelarDialog = () => {
     setConfirmarDialog(false);
